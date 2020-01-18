@@ -30,7 +30,7 @@ class PruebareactiveApplicationTests {
 	}
 
 	@Test
-	void ejercicio2(){
+	void obtenerNombreDeLaPeliculaConMayorCalificacion(){
 		Flux<Double> calificaciones = Flux.fromIterable(peliculas)
 				.map(p -> p.getCalificacion())
 				.flatMap(c -> Flux.just(c));
@@ -42,10 +42,29 @@ class PruebareactiveApplicationTests {
 	}
 
 	@Test
-	public void obtenerMayoresDe2Horas(){
+	public void obtenerPeliculasMayoresDe2Horas(){
 		Flux.fromIterable(peliculas)
 				.filter(p -> p.getDuracion().getHour() >= 2)
 				.subscribe(pel -> System.out.println(pel.toString()));
 	}
-	
+
+	@Test
+	public void obtenerLasPeliculasMayoresConCalificacionMayorAOcho(){
+		Flux.fromIterable(peliculas)
+				.filter(p -> p.getCalificacion() > 8)
+				.subscribe(mayores -> System.out.println(mayores.toString()));
+	}
+
+	@Test
+	public void obtenerLaPeliculaMasLarga(){
+		Flux<LocalTime> duracion = Flux.fromIterable(peliculas)
+				.map(d -> d.getDuracion())
+				.flatMap(duraciones -> Flux.just(duraciones));
+
+		MathFlux.max(duracion).subscribe(mayor ->{
+			Flux.fromIterable(peliculas)
+					.filter(may -> may.getDuracion() == mayor)
+					.subscribe(peliculaMayorDuracion -> System.out.println(peliculaMayorDuracion.toString()));
+		});
+	}
 }
