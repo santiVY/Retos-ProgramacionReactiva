@@ -58,8 +58,7 @@ class PruebareactiveApplicationTests {
 	@Test
 	public void obtenerLaPeliculaMasLarga(){
 		Flux<LocalTime> duracion = Flux.fromIterable(peliculas)
-				.map(d -> d.getDuracion())
-				.flatMap(duraciones -> Flux.just(duraciones));
+				.map(d -> d.getDuracion());
 
 		MathFlux.max(duracion).subscribe(mayor ->{
 			Flux.fromIterable(peliculas)
