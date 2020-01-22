@@ -3,6 +3,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import org.springframework.boot.test.context.SpringBootTest;
+import reactor.core.publisher.Mono;
 import reactor.math.MathFlux;
 
 import java.time.LocalTime;
@@ -31,14 +32,24 @@ class PruebareactiveApplicationTests {
 
 	@Test
 	void obtenerNombreDeLaPeliculaConMayorCalificacion(){
+		//Primera forma
 		Flux<Double> calificaciones = Flux.fromIterable(peliculas)
-				.map(p -> p.getCalificacion())
-				.flatMap(c -> Flux.just(c));
+				.map(p -> p.getCalificacion());
 
 		MathFlux.max(calificaciones).subscribe(mayor -> {
 			Flux.fromIterable(peliculas).filter(p -> p.getCalificacion() == mayor)
 					.subscribe(per -> System.out.println(per.toString()));
 		});
+
+		//Segunda forma
+		Flux.fromIterable(peliculas)
+				.map(p -> p.getCalificacion())
+				.sort()
+				.last()
+				.subscribe(m -> {
+					Flux.fromIterable(peliculas).filter(p -> p.getCalificacion() == m)
+							.subscribe(per -> System.out.println(per.toString()));
+				});
 	}
 
 	@Test
